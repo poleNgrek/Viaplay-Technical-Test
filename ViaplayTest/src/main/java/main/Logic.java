@@ -3,18 +3,24 @@ package main;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.RelationalGroupedDataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
-
-import static org.apache.spark.sql.functions.*;
 
 
 public class Logic{
 	public static void main(String[] args) {
 		
+		//Create SparkSession object
 		SparkSession spark = SparkSession.builder().appName("Viaplay Test").getOrCreate();		
-
+		
+/*
+ * 
+ * 						Schema Declarations
+ * 
+ * Inferring schemas didn't work as i wanted for type brodacast_right dates and for dt
+ * Therefore i declare the Schemas to be safer and to avoid changing casting types of collumns later on
+ * 
+ */
+		
 		StructType schemaSsn = new StructType()
 				.add("dt", "date")
 				.add("time", "string")
@@ -38,20 +44,38 @@ public class Logic{
 				.add("broadcast_right_end_date", "date")
 				.add("broadcast_right_start_date", "date");
 		
+/*
+ * 
+ * Create dataframes from the CSV files and apply the schemas that we declared previously
+ * 
+ */
+		
 		Dataset<Row> dfSsn = spark.read()
-				.option("header", "true")
-				//.option("timestampFormat","hh:mm:ss")
+				.option("header", "true") //the first line of files will be used to name columns and will not be included in data
 				.schema(schemaSsn)
-				.csv("/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/started_streams_new.csv");/**/
+				.csv("/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/started_streams_new.csv");
 		
 		Dataset<Row> dfWhatson = spark.read()
-				.option("header", "true")
+				.option("header", "true") //the first line of files will be used to name columns and will not be included in data
 				.schema(schemaWhatson)
 				.csv("/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/whatson.csv");		
 		
-		//register any DataFrame as a temporary table and query it using pure SQL
+		
+/*
+ * 
+ * 	Here I register the DataFrames as temporary tables in order query them using pure ol' SQL
+ * 
+ */
+		
 		dfSsn.createOrReplaceTempView("stream"); 
 		dfWhatson.createOrReplaceTempView("whatson");
+		
+/*
+ *
+ * 	For each task, a Dataframe is generated containing the resulting tables from the queries.
+ *  Let's exploit the fact that SparkSQL allows using SQL like queries to access the data.
+ * 
+ */
 		
 		Dataset<Row> task1 = spark.sql("SELECT b.dt, a.time, a.device_name, b.house_number, a.user_id, "
 				+ "a.country_code, a.program_title, a.season, a.season_episode, a.genre, a.product_type, "
@@ -65,11 +89,11 @@ public class Logic{
 						+ "GROUP BY house_number, title, broadcast_right_region"
 						+ ") x "
 					+ "JOIN whatson t "
-					+ "ON x.house_number == t.house_number "
-					+ "AND x.date == t.dt AND x.title == t.title AND x.broadcast_right_region == t.broadcast_right_region "
+					+ "ON x.house_number = t.house_number "
+					+ "AND x.date = t.dt AND x.title = t.title AND x.broadcast_right_region = t.broadcast_right_region "
 					+ "GROUP BY t.house_number, t.dt, t.title, t.broadcast_right_region, t.broadcast_right_start_date , t.broadcast_right_end_date) b "
 				+ "JOIN stream a "
-				+ "ON a.house_number == b.house_number "
+				+ "ON a.house_number = b.house_number "
 				+ "WHERE a.product_type = 'tvod' "
 				+ "OR a.product_type = 'est'");
 		
@@ -108,30 +132,44 @@ public class Logic{
 				+ "ORDER BY watched_time");
 
 		
-		task3.show(300);//testing
+		//task3.show(300);//testing
+		
+		// we print the dataframes' schemas for testing purposes
+		task1.printSchema();
+		task2.printSchema();
 		task3.printSchema();
 
+		
+		/*
+		 * 
+		 * 	We write the dataframes to disc using the repartition(1) function.
+		 * 	The reason for this is that without it Spark is creating a folder with multiple files 
+		 *  because each partition is saved individually. Since we need only one file we add it in every write() function 
+		 * 
+		 */
+		
 		task1.repartition(1).write().format("com.databricks.spark.csv")
 		.option("charset", "UTF-8")
-		.option("header", "true")
+		.option("header", "true") // we want to keep the first line as the column headers
 		.option("mode", "OVERWRITE")
-		.option("path", "/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/task1.csv")
+		.option("path", "/home/ben/gitProjects/Viaplay-Technical-Test/Output/task1.csv")
 		.save();
 		
 		task2.repartition(1).write().format("com.databricks.spark.csv")
 		.option("charset", "UTF-8")
 		.option("header", "true")
 		.option("mode", "OVERWRITE")
-		.option("path", "/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/task2.csv")
+		.option("path", "/home/ben/gitProjects/Viaplay-Technical-Test/Output/task2.csv")
 		.save();
 		
 		task3.repartition(1).write().format("com.databricks.spark.csv")
 		.option("charset", "UTF-8")
 		.option("header", "true")
 		.option("mode", "OVERWRITE")
-		.option("path", "/home/ben/Interview/Viaplay/DataEngineerTechTestv1.1/task3.csv")
+		.option("path", "/home/ben/gitProjects/Viaplay-Technical-Test/Output/task3.csv")
 		.save();
 		
+		// we close the connection to the spark cluster by stopping the spark context
 		spark.stop();
 	}
 }
