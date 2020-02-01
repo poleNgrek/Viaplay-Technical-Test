@@ -1,7 +1,7 @@
 # Viaplay-Technical-Test
 An ETL project which analyzes customers' behavior and content using the whatson and stream dataset provided by Viaplay.
 
-The project is done with Spark using the Java API and Maven. 
+The project is done with Maven and Spark using the Java API. 
 
 There is only one class called Logic which handles all the ETL logic.
 
