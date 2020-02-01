@@ -1,4 +1,7 @@
 # Viaplay-Technical-Test
+
+## A quick explanation over the code
+
 An ETL project which analyzes customers' behavior and content using the whatson and stream dataset provided by Viaplay.
 
 The project is done with Maven and Spark using the Java API. 
@@ -24,3 +27,40 @@ The code does the following procedures:
 8. Exports the DataFrames in CSV format and saves them on disc for further analysis.
 
 9. The Spark session ends
+
+## Dataset Documentation
+
+For the first task the resulting CSV file has the following schema:
+
+root
+ |-- dt: date (nullable = true)
+ |-- time: string (nullable = true)
+ |-- device_name: string (nullable = true)
+ |-- house_number: string (nullable = true)
+ |-- user_id: string (nullable = true)
+ |-- country_code: string (nullable = true)
+ |-- program_title: string (nullable = true)
+ |-- season: string (nullable = true)
+ |-- season_episode: string (nullable = true)
+ |-- genre: string (nullable = true)
+ |-- product_type: string (nullable = true)
+ |-- broadcast_right_start_date: date (nullable = true)
+ |-- broadcast_right_end_date: date (nullable = true)
+
+For the second task the schema is the following:
+
+root
+ |-- dt: date (nullable = true)
+ |-- program_title: string (nullable = true)
+ |-- device_name: string (nullable = true)
+ |-- country_code: string (nullable = true)
+ |-- product_type: string (nullable = true)
+ |-- unique_users: long (nullable = false)
+ |-- content_count: long (nullable = false)
+ 
+ And finally for the last task the generated schema is:
+
+root
+ |-- watched_time: integer (nullable = true)
+ |-- genre: string (nullable = true)
+ |-- unique_users: long (nullable = true)
