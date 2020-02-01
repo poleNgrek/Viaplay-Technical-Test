@@ -31,7 +31,7 @@ The code does the following procedures:
 ## Dataset Documentation
 
 For the first task the resulting CSV file has the following schema:
-
+'''
 root
  |-- dt: date (nullable = true)
  |-- time: string (nullable = true)
@@ -46,7 +46,7 @@ root
  |-- product_type: string (nullable = true)
  |-- broadcast_right_start_date: date (nullable = true)
  |-- broadcast_right_end_date: date (nullable = true)
-
+'''
 For the second task the schema is the following:
 
 root
