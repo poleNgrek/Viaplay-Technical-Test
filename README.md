@@ -31,7 +31,8 @@ The code does the following procedures:
 ## Dataset Documentation
 
 For the first task the resulting CSV file has the following schema:
-'''
+
+```
 root
  |-- dt: date (nullable = true)
  |-- time: string (nullable = true)
@@ -46,9 +47,9 @@ root
  |-- product_type: string (nullable = true)
  |-- broadcast_right_start_date: date (nullable = true)
  |-- broadcast_right_end_date: date (nullable = true)
-'''
+```
 For the second task the schema is the following:
-
+```
 root
  |-- dt: date (nullable = true)
  |-- program_title: string (nullable = true)
@@ -57,10 +58,11 @@ root
  |-- product_type: string (nullable = true)
  |-- unique_users: long (nullable = false)
  |-- content_count: long (nullable = false)
- 
- And finally for the last task the generated schema is:
-
+ ```
+And finally for the last task the generated schema is:
+```
 root
  |-- watched_time: integer (nullable = true)
  |-- genre: string (nullable = true)
  |-- unique_users: long (nullable = true)
+```
