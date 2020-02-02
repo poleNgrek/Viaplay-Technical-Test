@@ -78,4 +78,4 @@ The types of columns unique_users and content_count, from the task 2 and 3, coul
 ```
 withColumn("COLUMN_NAME", (col("COLUMN_NAME").cast("integer")))
 ```
-However i thought that in this particular change it is not that important since we just output the data into a CSV.
+However i thought that in this particular case it is not that important since the data are written into a CSV without storing the data types in the headers and the tables are destroyed once the spark session ends.
