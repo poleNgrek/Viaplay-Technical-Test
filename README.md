@@ -32,6 +32,8 @@ The code does the following procedures:
 
 ## Dataset Documentation
 
+The Output folder contains the folders with the results for each task.
+
 For the first task the resulting CSV file has the following schema:
 
 ```
