@@ -2,7 +2,7 @@
 
 ## A quick explanation over the code
 
-An ETL project which analyzes customers' behavior and content using the whatson and stream dataset provided by Viaplay.
+An ETL project which analyzes customers' behavior and content using the whatson and stream dataset provided by [Viaplay](https://viaplay.se/).
 
 The project is done with Maven and Spark using the Java API. 
 
