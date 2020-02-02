@@ -4,7 +4,7 @@
 
 An ETL project which analyzes customers' behavior and content using the whatson and stream dataset provided by [Viaplay](https://viaplay.se/).
 
-The project is done with Maven and Spark using the Java API. 
+The project is done with [Apache Maven](https://maven.apache.org/ "Maven Homepage) and Spark using the Java API. 
 
 There is only one class called Logic which handles all the ETL logic.
 
